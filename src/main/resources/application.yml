@@ -1,0 +1,26 @@
+server:
+  port: ${PORT:8081}
+spring:
+  application:
+    name: users
+eureka:
+  client:
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://localhost:5000/eureka}
+#      http://user:password@url/eureka
+security:
+  user:
+    password: ${eureka.password}
+---
+eureka:
+  instance:
+    hostname: ${DOMAIN_NAME:localhost}
+    nonSecurePort: 80
+    prefer-ip-address: true
+    app-group-name: fgsc
+    appname: users
+  password: ${USER_PASSWORD:password}
+#security:
+#  user:
+#    password: ${eureka.password}
