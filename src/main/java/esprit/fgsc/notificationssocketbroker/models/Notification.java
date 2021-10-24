@@ -23,6 +23,4 @@ public class Notification {
         this.clientId = receiverId;
         this.message = message;
     }
-
-
 }

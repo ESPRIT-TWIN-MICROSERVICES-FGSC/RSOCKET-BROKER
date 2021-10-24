@@ -17,6 +17,7 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -40,8 +41,7 @@ import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.PreDestroy;
-import java.io.BufferedWriter;
-import java.time.Duration;
+
 import java.time.Instant;
 import java.util.*;
 
@@ -50,61 +50,9 @@ import java.util.*;
 @RestController
 @CrossOrigin(origins = "*")
 public class NotificationController {
-    @Autowired private NotificationRepository notificationRepository;
-    public static final Map<String,RSocketRequester> CLIENTS = new HashMap<>();
-    // , @Payload String client , @PreAuthorize("hasRole('USER')") , @AuthenticationPrincipal UserDetails user , final FGSCMessage request , @Payload String client
-    @ConnectMapping
-    @SubscribeMapping
-    @RequestMapping
-    @MessageMapping
-    void connectShellClientAndAskForTelemetry(RSocketRequester requester, @Payload String clientId) {
-        Hooks.onErrorDropped((aze) -> {
-            log.debug("Dropped client : {}",clientId);
-        });
-        try {
-            Objects.requireNonNull(requester.rsocket()).onClose().doFinally(terminalSignal -> {
-                log.info("closed, signal : {}",terminalSignal);
-                CLIENTS.remove(clientId);
-                requester.dispose();
-            }).subscribe();
-            Objects.requireNonNull(requester.rsocket())
-                    .onClose()
-                    .doFirst(() -> {
-                        CLIENTS.put(clientId,requester);
-                        log.info("Client : {} connected", clientId);
-                        Timer timer = new Timer();
-                        TimerTask task = new TimerTask() {
-                            @Override
-                            public void run() {
-                                log.debug("scheduling");
-                                if (CLIENTS.containsKey(clientId)){
-                                    Notification n = new Notification(clientId,"THIS IS A TEST NOTIFICATION");
-                                    CLIENTS.get(clientId).route("notifications").data(n).send().subscribe();
-                                } else {
-                                    cancel();
-                                }
-                            }
-                        };
-                        timer.scheduleAtFixedRate(task,new Date(),20000);
-                    })
-                    .doOnError(e -> {
-                        log.warn("Error with socket",e);
-                        CLIENTS.remove(clientId);
-                        requester.dispose();
-                    })
-                    .doFinally(consumer -> {
-                        log.debug("Removing client {}",clientId);
-                        CLIENTS.remove(clientId);
-                        requester.dispose();
-                    })
-                    .subscribe();
-        } catch (Exception e){
-            log.warn("Exception : {}",e.getMessage());
-            CLIENTS.remove(clientId);
-            requester.dispose();
-        }
-    }
-
+    @Autowired
+    private NotificationRepository notificationRepository;
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("seen")
     public void switchNotificationToSeen(@RequestBody String notificationId){
         this.notificationRepository.findById(notificationId).subscribe(notification -> {
@@ -112,29 +60,28 @@ public class NotificationController {
             notificationRepository.save(notification);
         });
     }
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("notifications")
     public Flux<Notification> getAllNotificationsByClient(@RequestParam String clientId, final @RequestParam(name = "page") int page, final @RequestParam(name = "size") int size) {
         return this.notificationRepository.getNotificationByClientIdOrderBySentAtDesc(clientId, PageRequest.of(page, size));
     }
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("notifications/count")
     public Mono<Long> countUnreadNotifications(@RequestParam String clientId) {
         return this.notificationRepository.countByClientIdAndSeenAtNull(clientId);
     }
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping
     public Mono<Notification> createNotification( @RequestBody Notification notification){return this.notificationRepository.save(notification);}
-
+    // TODO : FOR DEV ONLY
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("all")
     public Mono<Void> deleteAll(){
         return this.notificationRepository.deleteAll();
     }
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping
     public Mono<Void> deleteByClientId(@RequestParam String clientId){
         return this.notificationRepository.deleteAllByClientId(clientId);
     }
-
-    @MessageExceptionHandler
-    public Mono<String> handleException(Throwable t) {
-        return Mono.just(t.getMessage());
-    }
-    @PreDestroy
-    void shutdown() {CLIENTS.values().forEach(requester -> Objects.requireNonNull(requester.rsocket()).dispose());}
 }
