@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,8 +31,9 @@ public class NotificationController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("notifications")
-    public Flux<Notification> getAllNotificationsByClient(@RequestParam String clientId, final @RequestParam(name = "page") int page, final @RequestParam(name = "size") int size) {
-        return this.notificationRepository.getNotificationByClientIdOrderBySentAtDesc(clientId, PageRequest.of(page, size));
+    public Flux<ResponseEntity> getAllNotificationsByClient(@RequestParam String clientId, final @RequestParam(name = "page") int page, final @RequestParam(name = "size") int size) {
+        return this.notificationRepository.getNotificationByClientIdOrderBySentAtDesc(clientId, PageRequest.of(page, size))
+                .map(notifications -> new ResponseEntity<>(notifications,HttpStatus.OK));
     }
 
     @ResponseStatus(HttpStatus.OK)
