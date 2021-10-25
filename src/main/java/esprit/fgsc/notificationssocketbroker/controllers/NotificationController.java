@@ -15,7 +15,6 @@ import java.time.Instant;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "**", maxAge = 3600, methods = {RequestMethod.DELETE,RequestMethod.POST,RequestMethod.OPTIONS,RequestMethod.GET,RequestMethod.PUT})
 public class NotificationController {
     @Autowired
     private NotificationRepository notificationRepository;

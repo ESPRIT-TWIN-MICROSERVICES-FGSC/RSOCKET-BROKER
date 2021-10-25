@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
-@EnableWebFlux
-@RestController
-@CrossOrigin("*")
 @EnableEurekaClient
 @EnableDiscoveryClient
 @SpringBootApplication
