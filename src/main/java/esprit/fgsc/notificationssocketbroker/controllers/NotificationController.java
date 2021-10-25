@@ -30,13 +30,13 @@ public class NotificationController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("notifications")
+    @GetMapping
     public Flux<Notification> getAllNotificationsByClient(@RequestParam String clientId, final @RequestParam(name = "page") int page, final @RequestParam(name = "size") int size) {
         return this.notificationRepository.getNotificationByClientIdOrderBySentAtDesc(clientId, PageRequest.of(page, size));
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("notifications/count")
+    @GetMapping("/count")
     public Mono<Long> countUnreadNotifications(@RequestParam String clientId) {
         return this.notificationRepository.countByClientIdAndSeenAtNull(clientId);
     }
