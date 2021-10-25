@@ -22,6 +22,7 @@ import java.util.Arrays;
 public class FgscNotificationsSocketBrokerApplication {
     public static void main(String[] args) {
         SpringApplication.run(FgscNotificationsSocketBrokerApplication.class, args);
+        System.out.println("mai");
     }
 
     @Bean
