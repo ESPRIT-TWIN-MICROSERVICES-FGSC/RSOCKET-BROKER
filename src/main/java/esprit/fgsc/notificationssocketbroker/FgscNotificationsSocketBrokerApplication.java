@@ -1,5 +1,6 @@
 package esprit.fgsc.notificationssocketbroker;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -14,6 +15,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 
 import java.util.Arrays;
 
+@Slf4j
 @EnableEurekaClient
 @EnableDiscoveryClient
 @SpringBootApplication
@@ -22,4 +24,19 @@ public class FgscNotificationsSocketBrokerApplication {
         SpringApplication.run(FgscNotificationsSocketBrokerApplication.class, args);
     }
 
+    @Bean
+    CorsWebFilter corsWebFilter() {
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        log.info("CORS CONFIGURED");
+        corsConfig.setAllowedOrigins(Arrays.asList("*"));
+        corsConfig.setMaxAge(8000L);
+        corsConfig.addAllowedMethod("*");
+        corsConfig.addAllowedHeader("*");
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+
+        return new CorsWebFilter(source);
+    }
 }

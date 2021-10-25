@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import java.time.Instant;
 
 @Slf4j
+@CrossOrigin("*")
 @RestController
 public class NotificationController {
     @Autowired

@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.util.*;
 
 @Slf4j
+@CrossOrigin("*")
 public class RSocketController {
 
     public static Map<String, RSocketRequester> CLIENTS = new HashMap<>();
