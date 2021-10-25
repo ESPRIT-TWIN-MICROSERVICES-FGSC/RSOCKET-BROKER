@@ -32,8 +32,7 @@ public class NotificationController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("notifications")
     public Flux<ResponseEntity> getAllNotificationsByClient(@RequestParam String clientId, final @RequestParam(name = "page") int page, final @RequestParam(name = "size") int size) {
-        return this.notificationRepository.getNotificationByClientIdOrderBySentAtDesc(clientId, PageRequest.of(page, size))
-                .map(notifications -> new ResponseEntity<>(notifications,HttpStatus.OK));
+        return this.notificationRepository.getNotificationByClientIdOrderBySentAtDesc(clientId, PageRequest.of(page, size));
     }
 
     @ResponseStatus(HttpStatus.OK)
