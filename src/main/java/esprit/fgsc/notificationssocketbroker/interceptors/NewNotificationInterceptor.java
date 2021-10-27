@@ -13,7 +13,7 @@ public class NewNotificationInterceptor extends AbstractMongoEventListener<Notif
     @Override
     public void onAfterSave(AfterSaveEvent<Notification> newNotification) {
         super.onAfterSave(newNotification);
-        String clientId = "\""+newNotification.getSource().getClientId()+"\"";
+        String clientId = newNotification.getSource().getClientId();
         if(RSocketController.CLIENTS.containsKey(clientId)){
             RSocketController.CLIENTS.get(clientId).route("notifications").data(newNotification.getSource()).send();
             log.info("Sent notification c");

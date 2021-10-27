@@ -30,37 +30,38 @@ public class RSocketController {
     @RequestMapping
     @MessageMapping
     void connectShellClientAndAskForTelemetry(RSocketRequester requester, @Payload String clientId) {
-        System.out.println("ok");
-        log.info("OK");
+        String finalClientId = clientId.replaceAll("\"","");
+        System.out.println(finalClientId);
+        log.info(finalClientId);
         Hooks.onErrorDropped((aze) -> {
-            log.debug("Dropped client : {}",clientId);
+            log.debug("Dropped client : {}", finalClientId);
         });
         try {
             Objects.requireNonNull(requester.rsocket()).onClose().doFinally(terminalSignal -> {
                 log.info("closed, signal : {}",terminalSignal);
-                CLIENTS.remove(clientId);
+                CLIENTS.remove(finalClientId);
                 requester.dispose();
             }).subscribe();
             Objects.requireNonNull(requester.rsocket())
                     .onClose()
                     .doFirst(() -> {
-                        CLIENTS.put(clientId,requester);
-                        log.info("Client : {} connected", clientId);
+                        CLIENTS.put(finalClientId,requester);
+                        log.info("Client : {} connected", finalClientId);
                     })
                     .doOnError(e -> {
                         log.warn("Error with socket",e);
-                        CLIENTS.remove(clientId);
+                        CLIENTS.remove(finalClientId);
                         requester.dispose();
                     })
                     .doFinally(consumer -> {
-                        log.debug("Removing client {}",clientId);
-                        CLIENTS.remove(clientId);
+                        log.debug("Removing client {}",finalClientId);
+                        CLIENTS.remove(finalClientId);
                         requester.dispose();
                     })
                     .subscribe();
         } catch (Exception e){
             log.warn("Exception : {}",e.getMessage());
-            CLIENTS.remove(clientId);
+            CLIENTS.remove(finalClientId);
             requester.dispose();
         }
     }
