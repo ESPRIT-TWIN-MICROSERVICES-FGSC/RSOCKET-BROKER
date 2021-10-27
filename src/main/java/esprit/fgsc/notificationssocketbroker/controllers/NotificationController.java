@@ -15,6 +15,7 @@ import java.time.Instant;
 
 @Slf4j
 @CrossOrigin("*")
+@RequestMapping("/s")
 @RestController
 public class NotificationController {
     @Autowired

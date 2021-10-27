@@ -1,6 +1,5 @@
 package esprit.fgsc.notificationssocketbroker.interceptors;
 
-import esprit.fgsc.notificationssocketbroker.controllers.NotificationController;
 import esprit.fgsc.notificationssocketbroker.controllers.RSocketController;
 import esprit.fgsc.notificationssocketbroker.models.Notification;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +9,11 @@ import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
 @Slf4j
 @Configuration
 public class NewNotificationInterceptor extends AbstractMongoEventListener<Notification> {
+
     @Override
     public void onAfterSave(AfterSaveEvent<Notification> newNotification) {
+        System.out.println("okaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        log.debug("Sending from interceptor");
         super.onAfterSave(newNotification);
         log.debug("Sending from interceptor");
         String clientId = newNotification.getSource().getClientId();

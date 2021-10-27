@@ -2,7 +2,7 @@ server:
   port: ${PORT:8081}
 spring:
   application:
-    name: users
+    name: messaging-socket-service
 eureka:
   client:
     fetch-registry: true
@@ -19,7 +19,7 @@ eureka:
     nonSecurePort: 80
     prefer-ip-address: true
     app-group-name: fgsc
-    appname: users
+    appname: messaging-socket-service
   password: ${USER_PASSWORD:password}
 #security:
 #  user:

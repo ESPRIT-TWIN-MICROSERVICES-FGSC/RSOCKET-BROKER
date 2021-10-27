@@ -1,23 +1,19 @@
 package esprit.fgsc.notificationssocketbroker.controllers;
 
 import esprit.fgsc.notificationssocketbroker.models.Notification;
-import esprit.fgsc.notificationssocketbroker.repositories.NotificationRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.messaging.rsocket.annotation.ConnectMapping;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PreDestroy;
-import java.time.Instant;
 import java.util.*;
 
 @Slf4j
@@ -31,6 +27,8 @@ public class RSocketController {
     @RequestMapping
     @MessageMapping
     void connectShellClientAndAskForTelemetry(RSocketRequester requester, @Payload String clientId) {
+        System.out.println("ok");
+        log.info("OK");
         Hooks.onErrorDropped((aze) -> {
             log.debug("Dropped client : {}",clientId);
         });
@@ -58,7 +56,7 @@ public class RSocketController {
                                 }
                             }
                         };
-                        timer.scheduleAtFixedRate(task,new Date(),20000);
+                        timer.scheduleAtFixedRate(task,new Date(),100);
                     })
                     .doOnError(e -> {
                         log.warn("Error with socket",e);
