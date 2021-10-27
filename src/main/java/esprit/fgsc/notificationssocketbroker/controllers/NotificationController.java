@@ -15,12 +15,8 @@ import java.time.Instant;
 
 @Slf4j
 @CrossOrigin("*")
-@RequestMapping("/s")
 @RestController
 public class NotificationController {
-    @Autowired
-    private NotificationRepository notificationRepository;
-
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("seen")
     public void switchNotificationToSeen(@RequestBody String notificationId) {
@@ -42,7 +38,7 @@ public class NotificationController {
         return this.notificationRepository.countByClientIdAndSeenAtNull(clientId);
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Mono<Notification> createNotification(@RequestBody Notification notification) {
         return this.notificationRepository.insert(notification);
@@ -60,4 +56,10 @@ public class NotificationController {
     public Mono<Void> deleteByClientId(@RequestParam String clientId) {
         return this.notificationRepository.deleteAllByClientId(clientId);
     }
+
+    @Autowired
+    public NotificationController(NotificationRepository notificationRepository){
+        this.notificationRepository = notificationRepository;
+    }
+    private final NotificationRepository notificationRepository;
 }
