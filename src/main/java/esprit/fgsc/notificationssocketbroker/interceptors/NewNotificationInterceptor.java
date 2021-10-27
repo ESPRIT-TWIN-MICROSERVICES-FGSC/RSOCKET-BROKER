@@ -16,7 +16,7 @@ public class NewNotificationInterceptor extends AbstractMongoEventListener<Notif
         String clientId = newNotification.getSource().getClientId();
         if(RSocketController.CLIENTS.containsKey(clientId)){
             RSocketController.CLIENTS.get(clientId).route("notifications").data(newNotification.getSource()).send();
-            log.info("Sent notification c");
+            log.info("Sent notification to {}",clientId);
         }
     }
 }
