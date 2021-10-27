@@ -46,20 +46,6 @@ public class RSocketController {
                     .doFirst(() -> {
                         CLIENTS.put(clientId,requester);
                         log.info("Client : {} connected", clientId);
-                        Timer timer = new Timer();
-                        TimerTask task = new TimerTask() {
-                            @Override
-                            public void run() {
-                                log.debug("scheduling");
-                                if (CLIENTS.containsKey(clientId)){
-                                    Notification n = new Notification(clientId,"THIS IS A TEST NOTIFICATION");
-                                    CLIENTS.get(clientId).route("notifications").data(n).send().subscribe();
-                                } else {
-                                    cancel();
-                                }
-                            }
-                        };
-                        timer.scheduleAtFixedRate(task,new Date(),100000000);
                     })
                     .doOnError(e -> {
                         log.warn("Error with socket",e);
