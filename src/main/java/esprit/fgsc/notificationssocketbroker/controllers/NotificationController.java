@@ -45,7 +45,7 @@ public class NotificationController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping
     public Mono<Notification> createNotification(@RequestBody Notification notification) {
-        return this.notificationRepository.save(notification);
+        return this.notificationRepository.insert(notification);
     }
 
     // TODO : FOR DEV ONLY

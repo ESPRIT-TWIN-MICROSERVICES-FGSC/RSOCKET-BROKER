@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.messaging.rsocket.annotation.ConnectMapping;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import reactor.core.publisher.Hooks;
@@ -17,6 +18,8 @@ import javax.annotation.PreDestroy;
 import java.util.*;
 
 @Slf4j
+@Controller
+@RequestMapping("/rs")
 @CrossOrigin("*")
 public class RSocketController {
 
@@ -56,7 +59,7 @@ public class RSocketController {
                                 }
                             }
                         };
-                        timer.scheduleAtFixedRate(task,new Date(),100);
+                        timer.scheduleAtFixedRate(task,new Date(),100000000);
                     })
                     .doOnError(e -> {
                         log.warn("Error with socket",e);
