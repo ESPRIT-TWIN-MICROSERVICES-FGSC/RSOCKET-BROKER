@@ -7,7 +7,7 @@ eureka:
   client:
     fetch-registry: true
     serviceUrl:
-      defaultZone: ${EUREKA_URL:http://localhost:5000/eureka}
+      defaultZone: https://fgsc-eureka-server.herokuapp.com/eureka
 #      http://user:password@url/eureka
 security:
   user:
@@ -15,7 +15,7 @@ security:
 ---
 eureka:
   instance:
-    hostname: ${DOMAIN_NAME:localhost}
+    hostname: fgsc-rsocket-broker.herokuapp.com
     nonSecurePort: 80
     prefer-ip-address: true
     app-group-name: fgsc
